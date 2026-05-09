@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Réservation Taxi Moto Premium tarif aligné</title>
+  <meta name="description" content="Formulaire Taxi Moto Premium avec forfaits et calcul hors forfait aligné sur 2.5€/km + 20€ de prise en charge." />
+  <style>
+    :root{--bg:#f4f7f9;--surface:#fff;--border:#d7e0e6;--text:#18252f;--muted:#647684;--brand:#123748;--brand2:#1a5c73;--accent:#2b8a78;--shadow:0 22px 60px rgba(18,55,72,.12)}
+    *{box-sizing:border-box} body{margin:0;padding:22px;font-family:Arial,sans-serif;background:linear-gradient(180deg,#eef3f6 0%,#f7fafc 100%);color:var(--text)}
+    .wrap{max-width:980px;margin:0 auto;background:var(--surface);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);padding:28px}
+    h1{margin:0 0 10px;text-align:center;color:var(--brand);font-size:34px}.intro{margin:0 0 22px;text-align:center;color:var(--muted);line-height:1.6}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.full{grid-column:1 / -1}.field{position:relative}
+    label{display:block;margin:0 0 6px;font-size:14px;font-weight:700;color:var(--brand)}
+    input,textarea{width:100%;border:1px solid var(--border);border-radius:16px;padding:15px 16px;font-size:15px;background:#fff;color:var(--text)}
+    input:focus,textarea:focus{outline:none;border-color:#2b8a78;box-shadow:0 0 0 4px rgba(43,138,120,.12)}
+    textarea{min-height:100px;resize:vertical}
+    .suggestions{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:50;background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:0 20px 40px rgba(23,36,46,.12);overflow:hidden;display:none;max-height:320px;overflow-y:auto}
+    .suggestions.open{display:block}.suggestion{padding:13px 15px;border-bottom:1px solid #edf2f5;cursor:pointer;background:#fff}.suggestion:last-child{border-bottom:none}.suggestion:hover{background:#f5f9fa}
+    .suggestion-title{font-size:14px;font-weight:700;color:var(--brand)}.suggestion-sub{margin-top:3px;font-size:12px;color:var(--muted);line-height:1.4}.suggestion-tag{display:inline-block;margin-top:6px;padding:4px 9px;border-radius:999px;background:#e8f0f4;color:var(--brand2);font-size:11px;font-weight:700}
+    .meta{margin-top:8px;font-size:12px;color:var(--muted)}
+    .panel{margin-top:24px;padding:18px;border:1px solid #d8e6e1;background:#f7fbfa;border-radius:20px}
+    .panel h2{margin:0 0 10px;color:var(--brand);font-size:22px}.panel p{margin:6px 0;color:var(--muted);line-height:1.6}
+    .price-box{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px}.card{padding:16px;border-radius:18px;background:#fff;border:1px solid #d8e6e1}
+    .card .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.card .v{margin-top:6px;font-size:22px;font-weight:700;color:var(--brand)}
+    .actions{display:flex;gap:14px;flex-wrap:wrap;margin-top:22px}.btn{flex:1;min-width:220px;border:none;border-radius:16px;padding:16px 18px;font-size:15px;font-weight:700;cursor:pointer}.btn-primary{background:linear-gradient(180deg,var(--brand2) 0%,var(--brand) 100%);color:#fff}.btn[disabled]{opacity:.55;cursor:not-allowed}
+    .notice{margin-top:14px;padding:14px 16px;border-radius:14px;background:#fff7eb;border:1px solid #f0d3a4;color:#7b5316;font-size:14px;line-height:1.6}
+    .ok{background:#edf8f4;border-color:#bfe4d4;color:#1f6554}.hidden{display:none}.helper{margin-top:8px;font-size:12px;color:var(--muted)}
+    .forfaits{margin-top:18px;padding:16px;border:1px solid #dbe6ec;border-radius:18px;background:#fbfdfe}
+    .forfaits h3{margin:0 0 10px;color:var(--brand);font-size:18px}.forfaits ul{margin:0;padding-left:18px;color:var(--muted);line-height:1.8}
+    @media (max-width:760px){body{padding:14px}.wrap{padding:18px;border-radius:18px}.grid,.price-box{grid-template-columns:1fr}.actions{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Réservation Taxi Moto Premium</h1>
+    <p class="intro">Prédiction d’adresse, calcul automatique du tarif et application prioritaire des forfaits.</p>
+
+    <form id="reservationForm" name="reservation" id="reservationForm">
+                        <input type="hidden" id="prixEstimeField" name="Tarif_estimatif" value="">
+      <input type="hidden" id="distanceField" name="Distance_estimative_km" value="">
+      <input type="hidden" id="typeTarifField" name="Type_de_tarif" value="">
+
+      <div class="grid">
+        <div>
+          <label for="nom">Nom</label>
+          <input id="nom" name="Nom" type="text" required>
+        </div>
+        <div>
+          <label for="email">Email</label>
+          <input id="email" name="email" type="email" required>
+        </div>
+        <div>
+          <label for="telephone">Téléphone</label>
+          <input id="telephone" name="Téléphone" type="tel" required>
+        </div>
+        <div>
+          <label for="dateCourse">Date de la course</label>
+          <input id="dateCourse" name="Date_de_la_course" type="date" required>
+        </div>
+        <div class="full">
+          <label for="heureCourse">Heure de la course</label>
+          <input id="heureCourse" name="Heure_de_la_course" type="time" required>
+        </div>
+
+        <div class="field full">
+          <label for="departInput">Adresse de départ</label>
+          <input id="departInput" name="Adresse_de_départ" type="text" autocomplete="off" placeholder="Ex. Gare de Lyon, Orly, Tour Eiffel" required>
+          <div id="departSuggestions" class="suggestions"></div>
+          <div id="departMeta" class="meta">Lieu retenu : --</div>
+        </div>
+
+        <div class="field full">
+          <label for="arriveeInput">Adresse d'arrivée</label>
+          <input id="arriveeInput" name="Adresse_d'arrivée" type="text" autocomplete="off" placeholder="Ex. La Défense, Roissy, Châtelet" required>
+          <div id="arriveeSuggestions" class="suggestions"></div>
+          <div id="arriveeMeta" class="meta">Lieu retenu : --</div>
+        </div>
+
+        <div class="full">
+          <label for="details">Informations complémentaires</label>
+          <textarea id="details" name="Informations_complémentaires" placeholder="Bagages, numéro de vol, remarque particulière..."></textarea>
+          <div class="helper">Le tarif estimatif calculé est automatiquement ajouté dans le mail envoyé lors de la demande.</div>
+        </div>
+      </div>
+
+      <div class="forfaits">
+        <h3>Forfaits intégrés</h3>
+        <ul>
+          <li>Paris / Paris : 45 €</li>
+          <li>Paris / Aéroport Orly : 75 €</li>
+          <li>Paris / Aéroport Roissy Charles de Gaulle : 90 €</li>
+          <li>La Défense / Aéroport Orly : 85 €</li>
+          <li>Aéroport Roissy Charles de Gaulle / Aéroport Orly : 120 €</li>
+        </ul>
+      </div>
+
+      <div id="messageBox" class="notice">Sélectionne une suggestion valide pour le départ et l’arrivée afin d’obtenir automatiquement le tarif estimatif.</div>
+
+      <div id="estimatePanel" class="panel hidden">
+        <h2>Tarif avant envoi</h2>
+        <p id="estimateText">Le montant est calculé automatiquement en fonction du trajet, avec application prioritaire des forfaits lorsqu’ils existent.</p>
+        <div class="price-box">
+          <div class="card"><div class="k">Type de tarif</div><div class="v" id="typeValue">--</div></div>
+          <div class="card"><div class="k">Distance estimative</div><div class="v" id="distanceValue">--</div></div>
+          <div class="card"><div class="k">Tarif estimatif</div><div class="v" id="priceValue">--</div></div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit" id="submitBtn" class="btn btn-primary" disabled>Envoyer la demande</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const knownPlaces = [
+      { label:'Paris Centre', commune:'Paris', tag:'Centre', keywords:['paris','paris centre'], coords:[2.3522,48.8566], zone:'paris' },
+      { label:'Aéroport Paris-Orly', commune:'Orly', tag:'Aéroport', keywords:['orly','aeroport','aéroport','aeroport orly','aéroport orly'], coords:[2.3594,48.7262], zone:'orly' },
+      { label:'Aéroport Roissy Charles-de-Gaulle', commune:'Roissy-en-France', tag:'Aéroport', keywords:['roissy','cdg','charles de gaulle'], coords:[2.55,49.0097], zone:'roissy' },
+      { label:'Gare du Nord', commune:'Paris', tag:'Gare SNCF', keywords:['gare du nord','gare nord'], coords:[2.3553,48.8809], zone:'paris' },
+      { label:'Gare de Lyon', commune:'Paris', tag:'Gare SNCF', keywords:['gare de lyon','gare lyon'], coords:[2.373,48.8443], zone:'paris' },
+      { label:'Gare Saint-Lazare', commune:'Paris', tag:'Gare SNCF', keywords:['saint lazare','gare saint lazare'], coords:[2.3256,48.8766], zone:'paris' },
+      { label:'La Défense', commune:'Courbevoie', tag:'Pôle d’affaires', keywords:['defense','défense','la defense','la défense'], coords:[2.2375,48.8919], zone:'defense' },
+      { label:'Tour Eiffel', commune:'Paris', tag:'Monument', keywords:['tour eiffel','eiffel'], coords:[2.2945,48.8584], zone:'paris' },
+      { label:'Arc de Triomphe', commune:'Paris', tag:'Monument', keywords:['arc de triomphe'], coords:[2.295,48.8738], zone:'paris' },
+      { label:'Notre-Dame de Paris', commune:'Paris', tag:'Monument', keywords:['notre dame'], coords:[2.3499,48.853], zone:'paris' },
+      { label:'Châtelet', commune:'Paris', tag:'Métro', keywords:['chatelet','châtelet'], coords:[2.347,48.8582], zone:'paris' },
+      { label:'Châtelet-Les Halles', commune:'Paris', tag:'Métro/RER', keywords:['les halles','chatelet les halles'], coords:[2.347,48.8619], zone:'paris' },
+      { label:'Disneyland Paris', commune:'Chessy', tag:'Loisir', keywords:['disney','disneyland'], coords:[2.7833,48.867], zone:'other' },
+      { label:'Château de Versailles', commune:'Versailles', tag:'Monument', keywords:['versailles','chateau de versailles','château de versailles'], coords:[2.1204,48.8049], zone:'other' }
+    ];
+    const allowedDepartments = ['75','77','78','91','92','93','94','95'];
+    const state = { depart:null, arrivee:null, timers:{}, estimateTimer:null, currentEstimate:null };
+    const submitBtn = document.getElementById('submitBtn');
+    const msg = document.getElementById('messageBox');
+    const panel = document.getElementById('estimatePanel');
+    const distanceValue = document.getElementById('distanceValue');
+    const typeValue = document.getElementById('typeValue');
+    const priceValue = document.getElementById('priceValue');
+    const estimateText = document.getElementById('estimateText');
+    const priceField = document.getElementById('prixEstimeField');
+    const distanceField = document.getElementById('distanceField');
+    const typeTarifField = document.getElementById('typeTarifField');
+
+    function setMessage(text, good=false){ msg.textContent=text; msg.className=good?'notice ok':'notice'; }
+    function normalizeText(value){ return value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim(); }
+    function searchKnownPlaces(query){ const q=normalizeText(query); if(!q) return []; return knownPlaces.filter(place=>{ const label=normalizeText(place.label); return label.includes(q) || place.keywords.some(k=>normalizeText(k).includes(q) || q.includes(normalizeText(k))); }).slice(0,10).map(place=>({ source:'known', properties:{ label:place.label, name:place.label, city:place.commune, context:place.tag, zone:place.zone }, geometry:{ coordinates: place.coords } })); }
+    function extractQueryDetails(query){ const postcodeMatch=query.match(/\b\d{5}\b/); const postcode=postcodeMatch?postcodeMatch[0]:''; const chunks=query.split(',').map(v=>v.trim()).filter(Boolean); const city=chunks.length>1?chunks[chunks.length-1].replace(/\b\d{5}\b/g,'').trim():''; return { postcode, city }; }
+    function inferZoneFromProperties(p){ const label = normalizeText((p.label||'') + ' ' + (p.name||'') + ' ' + (p.city||'')); if(label.includes('orly')) return 'orly'; if(label.includes('roissy') || label.includes('charles de gaulle') || label.includes('charles-de-gaulle') || label.includes('cdg')) return 'roissy'; if(label.includes('la defense') || label.includes('defense') || label.includes('courbevoie')) return 'defense'; if((p.postcode||'').startsWith('75') || (p.city||'').toLowerCase()==='paris') return 'paris'; return 'other'; }
+    async function searchBan(query){ const { postcode, city }=extractQueryDetails(query); const params=new URLSearchParams({ q:query, limit:'8', autocomplete:'1' }); if(postcode) params.set('postcode', postcode); if(city) params.set('city', city); const res=await fetch('https://api-adresse.data.gouv.fr/search/?'+params.toString()); const data=await res.json(); return (data.features||[]).filter(item=>{ const p=item.properties||{}; const dept=(p.citycode||'').slice(0,2); return p.city && allowedDepartments.includes(dept); }).map(item=>({ source:'ban', properties:{...item.properties, zone: inferZoneFromProperties(item.properties||{})}, geometry:item.geometry })); }
+    async function getSuggestions(query){ const localResults=searchKnownPlaces(query); if(localResults.length) return localResults; return await searchBan(query); }
+    function closeSuggestions(box){ box.classList.remove('open'); box.innerHTML=''; }
+    function clearEstimate(message){ state.currentEstimate=null; priceField.value=''; distanceField.value=''; typeTarifField.value=''; panel.classList.add('hidden'); submitBtn.disabled=true; if(message) setMessage(message); }
+    function setPoint(kind,label,commune,coords,zone){ state[kind]={label,commune,coords,zone}; document.getElementById(kind+'Meta').textContent='Lieu retenu : '+label+' ('+commune+')'; scheduleEstimate(); }
+    function resetPoint(kind){ state[kind]=null; document.getElementById(kind+'Meta').textContent='Lieu retenu : --'; clearEstimate('Sélectionne une suggestion valide pour le départ et l’arrivée afin d’obtenir automatiquement le tarif estimatif.'); }
+    function renderSuggestions(kind,results){ const box=document.getElementById(kind+'Suggestions'); if(!results.length){ box.innerHTML='<div class="suggestion"><div class="suggestion-title">Aucun résultat</div><div class="suggestion-sub">Essaie avec une adresse plus complète ou un lieu connu Paris / IDF.</div></div>'; box.classList.add('open'); return; } box.innerHTML=results.map((item,index)=>{ const p=item.properties; const tag=item.source==='known'?(p.context||'Lieu connu'):'Adresse IDF'; const sub=[p.name,p.postcode,p.city].filter(Boolean).join(' · '); return `<div class="suggestion" data-index="${index}"><div class="suggestion-title">${p.label}</div><div class="suggestion-sub">${sub}</div><div class="suggestion-tag">${tag}</div></div>`; }).join(''); box.classList.add('open'); box.querySelectorAll('.suggestion[data-index]').forEach(node=>{ node.addEventListener('click',()=>{ const item=results[Number(node.dataset.index)]; const p=item.properties; const rawCoords=item.geometry && Array.isArray(item.geometry.coordinates) ? item.geometry.coordinates : null; const coords=rawCoords && rawCoords.length===2 ? [Number(rawCoords[0]), Number(rawCoords[1])] : null; document.getElementById(kind+'Input').value=p.label; setPoint(kind,p.label,p.city||'Paris / IDF',coords,p.zone||'other'); closeSuggestions(box); }); }); }
+    function setupAutocomplete(kind){ const input=document.getElementById(kind+'Input'); const box=document.getElementById(kind+'Suggestions'); input.addEventListener('input',()=>{ resetPoint(kind); clearTimeout(state.timers[kind]); const query=input.value.trim(); if(query.length<2){ closeSuggestions(box); return; } state.timers[kind]=setTimeout(async()=>{ try{ const results=await getSuggestions(query); renderSuggestions(kind,results); }catch(e){ box.innerHTML='<div class="suggestion"><div class="suggestion-title">Recherche indisponible</div><div class="suggestion-sub">Réessaie dans quelques secondes.</div></div>'; box.classList.add('open'); } },180); }); }
+    function haversineKm(lat1, lon1, lat2, lon2){ const R=6371; const toRad=v=>v*Math.PI/180; const dLat=toRad(lat2-lat1); const dLon=toRad(lon2-lon1); const a=Math.sin(dLat/2)**2 + Math.cos(toRad(lat1))*Math.cos(toRad(lat2))*Math.sin(dLon/2)**2; const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); return R*c; }
+    function getFlatFare(zoneA, zoneB){ const pair=[zoneA, zoneB].sort().join('|'); const fares={ 'paris|paris':45, 'orly|paris':75, 'paris|roissy':90, 'defense|orly':85, 'orly|roissy':120 }; return fares[pair] || null; }
+    function computePrice(distanceKm, zoneA, zoneB){ const flatFare = getFlatFare(zoneA, zoneB); if(flatFare){ return { price: flatFare, type: 'Forfait', distanceLabel: 'Trajet forfaitaire' }; } const total = (distanceKm * 2.5) + 20; return { price: Math.ceil(total), type: 'Estimation', distanceLabel: distanceKm.toFixed(1) + ' km' }; }
+    function updateEstimate(){
+      if(!state.depart || !state.arrivee || !state.depart.coords || !state.arrivee.coords){
+        clearEstimate('Sélectionne une suggestion valide pour le départ et l’arrivée afin d’obtenir automatiquement le tarif estimatif.');
+        return;
+      }
+      const [lon1, lat1] = state.depart.coords.map(Number);
+      const [lon2, lat2] = state.arrivee.coords.map(Number);
+      if([lon1, lat1, lon2, lat2].some(v => Number.isNaN(v))){
+        clearEstimate('Les coordonnées récupérées sont invalides. Choisis une autre suggestion d’adresse.');
+        return;
+      }
+      const directDistance = haversineKm(lat1, lon1, lat2, lon2);
+      const estimatedDistance = directDistance * 1.4;
+      if(Number.isNaN(estimatedDistance) || !Number.isFinite(estimatedDistance)){
+        clearEstimate('Impossible de calculer le trajet. Choisis une autre suggestion.');
+        return;
+      }
+      const pricing = computePrice(estimatedDistance, state.depart.zone || 'other', state.arrivee.zone || 'other');
+      state.currentEstimate={ distanceKm: estimatedDistance, price: pricing.price, type: pricing.type };
+      typeValue.textContent=pricing.type;
+      distanceValue.textContent=pricing.distanceLabel;
+      priceValue.textContent=pricing.price.toFixed(0)+' €';
+      priceField.value=pricing.price.toFixed(0)+' EUR';
+      distanceField.value=estimatedDistance.toFixed(1);
+      typeTarifField.value=pricing.type;
+      estimateText.textContent = pricing.type === 'Forfait'
+        ? 'Le trajet correspond à un forfait intégré. Le montant affiché est donc le tarif forfaitaire appliqué automatiquement.'
+        : 'Le montant affiché correspond à une estimation automatique du trajet avant envoi de la demande.';
+      panel.classList.remove('hidden');
+      submitBtn.disabled=false;
+      setMessage('Tarif estimatif calculé automatiquement. Il sera ajouté dans le mail envoyé avec la demande.', true);
+    }
+    function scheduleEstimate(){ clearTimeout(state.estimateTimer); clearEstimate('Mise à jour automatique du tarif en cours...'); state.estimateTimer=setTimeout(updateEstimate,350); }
+    document.addEventListener('click',event=>{ if(!event.target.closest('.field')){ closeSuggestions(document.getElementById('departSuggestions')); closeSuggestions(document.getElementById('arriveeSuggestions')); } });
+    document.getElementById('reservationForm').addEventListener('submit', async function(event){
+      event.preventDefault();
+      if(!state.currentEstimate || !state.depart || !state.arrivee){
+        setMessage('Le client doit sélectionner une suggestion valide pour chaque adresse et attendre le calcul du tarif avant l’envoi.');
+        return;
+      }
+      const form = event.currentTarget;
+      const data = Object.fromEntries(new FormData(form).entries());
+      const button = document.getElementById('submitBtn');
+      button.disabled = true;
+      button.textContent = 'Envoi en cours...';
+      setMessage('Envoi de la demande en cours...');
+      try {
+        const response = await fetch('/.netlify/functions/send-reservation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+        const result = await response.json();
+        if(!response.ok || !result.ok){
+          throw new Error(result.message || 'Erreur d’envoi');
+        }
+        setMessage('Demande envoyée avec succès. Un email de confirmation a été transmis au client.', true);
+        button.textContent = 'Demande envoyée';
+        form.reset();
+        state.depart = null;
+        state.arrivee = null;
+        state.currentEstimate = null;
+        document.getElementById('departMeta').textContent='Lieu retenu : --';
+        document.getElementById('arriveeMeta').textContent='Lieu retenu : --';
+        document.getElementById('estimatePanel').classList.add('hidden');
+      } catch (error) {
+        button.disabled = false;
+        button.textContent = 'Envoyer la demande';
+        setMessage('Échec de l’envoi : ' + error.message);
+      }
+    });
+    setupAutocomplete('depart'); setupAutocomplete('arrivee');
+  </script>
+</body>
+</html>
