@@ -13,15 +13,18 @@ exports.handler = async (event) => {
     const data = JSON.parse(event.body || '{}');
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'mail.webador.com',
+      port: 587,
+      secure: false,
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
       }
     });
 
     const adminEmail = 'fadpsg@gmail.com';
     const clientEmail = data.email || '';
+    const fromEmail = '"Urbanrace Taxi Moto" <info@urbanrace-taxi-moto.fr>';
 
     const adminText = [
       'Nouvelle demande de réservation Taxi Moto Premium',
@@ -40,7 +43,7 @@ exports.handler = async (event) => {
     ].join('\n');
 
     await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+      from: fromEmail,
       to: adminEmail,
       subject: 'Nouvelle réservation - ' + (data.Nom || 'Client') + ' - ' + (data.Tarif_estimatif || ''),
       text: adminText
@@ -64,7 +67,7 @@ exports.handler = async (event) => {
       ].join('\n');
 
       await transporter.sendMail({
-        from: process.env.GMAIL_USER,
+        from: fromEmail,
         to: clientEmail,
         subject: 'Confirmation de votre demande Taxi Moto Premium',
         text: clientText
