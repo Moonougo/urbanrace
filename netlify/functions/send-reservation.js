@@ -12,20 +12,23 @@ exports.handler = async (event) => {
   try {
     const data = JSON.parse(event.body || '{}');
 
-    if (!process.env.GMAIL_USER || !process.env.GMAIL_APP_PASSWORD) {
-      throw new Error('Variables GMAIL_USER ou GMAIL_APP_PASSWORD manquantes');
+    if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
+      throw new Error('Variables SMTP_USER ou SMTP_PASS manquantes');
     }
 
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      host: 'mail.webador.com',
+      port: 587,
+      secure: false,
       auth: {
-        user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASS
       }
     });
 
-    const adminEmail = 'fadpsg@gmail.com';
+    const adminEmail = 'info@urbanrace-taxi-moto.fr';
     const clientEmail = data.email || '';
+    const fromEmail = '"Urbanrace Taxi Moto" <info@urbanrace-taxi-moto.fr>';
 
     const adminText = [
       'Nouvelle demande de réservation Taxi Moto Premium',
@@ -44,11 +47,11 @@ exports.handler = async (event) => {
     ].join('\n');
 
     await transporter.sendMail({
-      from: process.env.GMAIL_USER,
+      from: fromEmail,
       to: adminEmail,
+      replyTo: clientEmail || adminEmail,
       subject: 'Nouvelle réservation - ' + (data.Nom || 'Client') + ' - ' + (data.Tarif_estimatif || ''),
-      text: adminText,
-      replyTo: clientEmail || process.env.GMAIL_USER
+      text: adminText
     });
 
     if (clientEmail) {
@@ -69,7 +72,7 @@ exports.handler = async (event) => {
       ].join('\n');
 
       await transporter.sendMail({
-        from: process.env.GMAIL_USER,
+        from: fromEmail,
         to: clientEmail,
         subject: 'Confirmation de votre demande Taxi Moto Premium',
         text: clientText
@@ -79,13 +82,19 @@ exports.handler = async (event) => {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ok: true, message: 'Email envoyé' })
+      body: JSON.stringify({ ok: true, message: 'Emails envoyés' })
     };
   } catch (error) {
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ok: false, message: error.message })
+      body: JSON.stringify({
+        ok: false,
+        message: error.message,
+        code: error.code || null,
+        response: error.response || null,
+        command: error.command || null
+      })
     };
   }
 };
