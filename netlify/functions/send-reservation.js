@@ -26,7 +26,7 @@ exports.handler = async (event) => {
       }
     });
 
-    const adminEmail = 'info@urbanrace-taxi-moto.fr';
+    const adminEmail = 'fadpsg@gmail.com, info@urbanrace-taxi-moto.fr';
     const clientEmail = data.email || '';
     const fromEmail = '"Urbanrace Taxi Moto" <info@urbanrace-taxi-moto.fr>';
 
